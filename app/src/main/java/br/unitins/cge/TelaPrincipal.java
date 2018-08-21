@@ -4,9 +4,12 @@ import android.opengl.GLSurfaceView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import static java.lang.Thread.sleep;
 
 public class TelaPrincipal extends AppCompatActivity {
 
@@ -43,7 +46,10 @@ public class TelaPrincipal extends AppCompatActivity {
 
 }
 //Classe que ira implementar a logica do desenho (O que eu quero desenhar na superficie)
-class Renderizador implements Renderer {
+class Renderizador implements Renderer{
+
+    private long cont = 0;
+    private boolean instancia = true;
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -53,12 +59,38 @@ class Renderizador implements Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         //Chamado quandoa  superficie de desenho sofre alteração
+        Log.i("INFO", width+" "+height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
-        //Metodo chamado para desenhar na tela
-    }
+        //Metodo chamado para desenhar na telA
+
+        cont++;
+
+        if(instancia) {
+            instancia = false;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.i("FPS", cont + "");
+                    cont = 0;
+                    instancia = true;
+                }
+            }).start();
+        }
+
+     }
+
+
+
 }
 
 
