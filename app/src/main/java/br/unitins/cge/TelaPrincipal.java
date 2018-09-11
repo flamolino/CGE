@@ -5,6 +5,7 @@ import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
+import android.widget.Button;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -39,6 +40,7 @@ public class TelaPrincipal extends Activity {
         //publicar a superficie de desenho na tela
         setContentView(this.superficieDesenho);
 
+
     }
 
 }
@@ -48,6 +50,10 @@ public class TelaPrincipal extends Activity {
 class Renderizador implements Renderer{
 
     private long largura = 0, altura = 0;
+    private float red, green, blue;
+    private float posX = 0, posY = 0;
+    private int direcaoX = -1, direcaoY = -1;
+    private float angulo = 0;
 
 
     @Override
@@ -60,6 +66,21 @@ class Renderizador implements Renderer{
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
 
+
+
+        /*
+
+            quadrado = new Quadrado(opengl, 4);
+            quadrado.setPosXY(200, 400);
+            quadrado.setRotacao(45);
+            quadrado.setScala(0.5, 0.5);
+            quadrado.setCor(1, 0, 0);
+
+         */
+
+        red = (float) Math.random();
+        green = (float) Math.random();
+        blue = (float) Math.random();
 
         //configura a area de visualização na tela do dispositivo
         //area da tela
@@ -84,13 +105,16 @@ class Renderizador implements Renderer{
         //habilita o desenho por vértices
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 
+        float tamanho = 300;
+
         //aloca memoria e define as coordenadas da primitiva
         float[] vetCoords1 = {
                 //tri1
-                0, altura/2,
-                0, 0,
-                largura/2, 0,
-                largura/2, altura/2
+
+                -tamanho/2, -tamanho/2,
+                -tamanho/2, tamanho/2,
+                tamanho/2, -tamanho/2,
+                tamanho/2, tamanho/2
 
 
 
@@ -130,21 +154,60 @@ class Renderizador implements Renderer{
     @Override
     public void onDrawFrame(GL10 gl) {
 
-        float red, green, blue;
+
+
+        /*
+            gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+            quadrado.desenha();
+
+         */
+
+        float limiteX = largura - (largura/2);
+        float limiteY = altura - (altura/2);
+
+
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        gl.glLoadIdentity();
+
+        gl.glTranslatef(400, 600, 0);
+        //rotaciona angulo graus em cima de Z
+        gl.glRotatef(angulo, 0, 0, 1);
+        gl.glScalef(2, 2, 1);
+        angulo+=6;
+
+
+        gl.glColor4f(this.red, this.green, this.blue, 1);
+        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+
+
+        /*
+        gl.glTranslatef(this.posX, this.posY, 0);
+        gl.glColor4f(this.red, this.green, this.blue, 1);
+        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
+
+        float speed = 50;
+        if(posX <= 0 || posX >= limiteX){
+            direcaoX *= -1;
+            mudaCor();
+        }
+        if(posY <= 0 || posY >= limiteY){
+            direcaoY *= -1;
+            mudaCor();
+        }
+        posX += direcaoX * speed;
+        posY += direcaoY * speed;
+        */
+     }
+
+    private void mudaCor() {
+
         red = (float) Math.random();
         green = (float) Math.random();
         blue = (float) Math.random();
 
-
-        //APLICA A COR DE LIMPEZA DE TELA A TODOS OS BITS DO BUFFER DE COR
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
-        gl.glColor4f(0.8f, 0, 0, 1);
-        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
-
-
-     }
-
+    }
 
 
 }
